@@ -25,9 +25,9 @@ const TYPE_LABELS = { newapi: "New API", sub2api: "Sub2API", opencode: "OpenCode
 function packageAccount(overrides = {}) {
   return {
     id: "acc-pkg",
-    name: "国模畅用 Lite",
+    name: "示例套餐 A",
     type: "custom",
-    group: "jucode",
+    group: "示例分组",
     thresholds: {},
     ...overrides,
   };
@@ -36,7 +36,7 @@ function packageAccount(overrides = {}) {
 function windowResult(percent, resetAt, extra = {}) {
   return {
     ok: true,
-    plan: { name: "国模畅用Lite", active: true },
+    plan: { name: "示例套餐 A", active: true },
     balance: null,
     windows: [
       {
@@ -188,7 +188,7 @@ test("阈值：resetAt 已过期但数据未刷新（值仍低）不重复触发
 });
 
 test("阈值：钱包余额跌破阈值触发，回升后计数归零", () => {
-  const account = packageAccount({ id: "wallet", name: "年华钱包", type: "sub2api", group: "nianhua" });
+  const account = packageAccount({ id: "wallet", name: "钱包账户", type: "sub2api", group: "wallet-provider" });
   const settings = { ...DEFAULT_SETTINGS, rules: { windowPercent: 20, balanceAmount: 50 } };
   const low = { ok: true, plan: { name: "钱包余额", active: true }, windows: [], balance: { remaining: 43.91, currency: "USD" } };
   const high = { ok: true, plan: { name: "钱包余额", active: true }, windows: [], balance: { remaining: 88, currency: "USD" } };
@@ -241,10 +241,10 @@ test("阈值：账户删除后清理其状态", () => {
 
 test("汇总：按分组、有效优先、余量低在前、限额在后", () => {
   const accounts = [
-    packageAccount({ id: "a1", name: "低余量", group: "jucode" }),
-    packageAccount({ id: "a2", name: "高余量", group: "jucode" }),
-    packageAccount({ id: "a3", name: "已限流", group: "jucode" }),
-    packageAccount({ id: "a4", name: "请求失败", group: "jucode" }),
+    packageAccount({ id: "a1", name: "低余量", group: "示例分组" }),
+    packageAccount({ id: "a2", name: "高余量", group: "示例分组" }),
+    packageAccount({ id: "a3", name: "已限流", group: "示例分组" }),
+    packageAccount({ id: "a4", name: "请求失败", group: "示例分组" }),
     packageAccount({ id: "a5", name: "另一组高余量", group: "opencode" }),
   ];
   const results = {
@@ -255,16 +255,16 @@ test("汇总：按分组、有效优先、余量低在前、限额在后", () =>
     a5: windowResult(30, null),
   };
   const sections = buildDigestSections(accounts, results, { typeLabels: TYPE_LABELS });
-  const jucode = sections.find((section) => section.group === "jucode");
+  const 示例分组 = sections.find((section) => section.group === "示例分组");
   assert.deepEqual(
-    jucode.items.map((item) => item.name),
+    示例分组.items.map((item) => item.name),
     ["低余量", "高余量", "已限流", "请求失败"],
   );
-  assert.equal(jucode.items[0].status, "ok");
-  assert.equal(jucode.items[2].status, "limited");
-  assert.equal(jucode.items[3].status, "error");
-  // 组间按“最差账户”排序：jucode 最差是出错，排在 opencode 之前
-  assert.equal(sections[0].group, "jucode");
+  assert.equal(示例分组.items[0].status, "ok");
+  assert.equal(示例分组.items[2].status, "limited");
+  assert.equal(示例分组.items[3].status, "error");
+  // 组间按“最差账户”排序：示例分组 最差是出错，排在 opencode 之前
+  assert.equal(sections[0].group, "示例分组");
 });
 
 test("汇总：未设置分组时回退到账户类型", () => {
@@ -274,13 +274,13 @@ test("汇总：未设置分组时回退到账户类型", () => {
 });
 
 test("汇总：消息包含分组标题、数量与各账户余量", () => {
-  const accounts = [packageAccount({ id: "a1", name: "账户甲", group: "jucode" })];
+  const accounts = [packageAccount({ id: "a1", name: "账户甲", group: "示例分组" })];
   const results = { a1: windowResult(80, null) };
   const sections = buildDigestSections(accounts, results, { typeLabels: TYPE_LABELS });
   const message = buildDigestMessage(sections, { now: new Date("2026-10-11T01:00:00Z"), timezone: "Asia/Shanghai" });
   assert.match(message.markdown, /全局余量汇总/);
   assert.match(message.markdown, /共 1 个账户/);
-  assert.match(message.markdown, /\*\*jucode\*\*（1 个）/);
+  assert.match(message.markdown, /\*\*示例分组\*\*（1 个）/);
   assert.match(message.markdown, /账户甲：.*20\.0%/);
 });
 
@@ -295,7 +295,7 @@ test("阈值消息包含账户、窗口、剩余、阈值与重置时间", () =>
   );
   const message = buildThresholdMessage(events, { now: new Date("2026-10-11T01:00:00Z"), timezone: "Asia/Shanghai" });
   assert.match(message.markdown, /余量告警/);
-  assert.match(message.markdown, /国模畅用 Lite/);
+  assert.match(message.markdown, /示例套餐 A/);
   assert.match(message.markdown, /5 小时：剩余 15\.0%，低于阈值 20%/);
   assert.match(message.markdown, /重置/);
 });

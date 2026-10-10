@@ -22,7 +22,7 @@ AIMONITOR_TOKEN=$(openssl rand -hex 16) npm run start:lan
 ```
 AI 账户余额面板已启动：
   http://127.0.0.1:8787
-  http://192.168.1.23:8787
+  http://<你的局域网IP>:8787
 ```
 
 在手机 / 其它电脑上打开 `http://<你的局域网IP>:8787` 即可。若设置了 `AIMONITOR_TOKEN`，首次打开会弹出「访问令牌」输入框；也可以直接用一次
@@ -92,7 +92,7 @@ AI 账户余额面板已启动：
 ```json
 {
   "currency": "CNY",
-  "plan_name": "国模畅用Lite",
+  "plan_name": "示例套餐 A",
   "plan_type": "quota_subscription",
   "has_active_plan": true,
   "expire_at": "2026-10-20T13:31:14.171139Z",
@@ -206,18 +206,26 @@ curl -H "Authorization: Bearer $TOKEN" 'http://127.0.0.1:8787/api/notifications/
 
 ## 部署
 
-### 内部集群（etl / balance.lucky37.cn）
-
-已部署在 `etl` 命名空间，域名 **https://balance.lucky37.cn**（Ingress Class `lucky37`，网关会把 HTTP 301 到 HTTPS）。
+### 容器镜像
 
 ```bash
-# 构建并推送镜像（集群内 dind 构建，无需本地 Docker）
-./deploy/build-and-push.sh
-
-# 更新镜像
-kubectl -n etl set image deployment/ai-monitor \
-  ai-monitor=hub.luckydcms.com/library/ai-monitor:<tag>
-kubectl -n etl rollout status deployment/ai-monitor
+docker build -t ai-monitor:latest .
+docker run -d --name ai-monitor -p 8787:8787 \
+  -v "$PWD/data:/app/data" \
+  -e AIMONITOR_TOKEN="$(openssl rand -hex 16)" \
+  ai-monitor:latest
 ```
+
+### Kubernetes
+
+`deploy/` 下提供一套清单（PVC / Deployment / Service / Ingress），把命名空间、域名、镜像仓库替换成你自己的环境即可：
+
+```bash
+kubectl -n <namespace> set image deployment/ai-monitor \
+  ai-monitor=<registry>/ai-monitor:<tag>
+kubectl -n <namespace> rollout status deployment/ai-monitor
+```
+
+没有可用的本地 Docker 时，也可以用 `deploy/build-and-push.sh` 借集群内的 dind Pod 构建推送。
 
 详见 [deploy/README.md](deploy/README.md)。

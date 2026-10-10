@@ -25,7 +25,7 @@ const SAMPLE_CUSTOM_PAYLOAD = {
   has_active_plan: true,
   monthly_spend_limit: "0",
   monthly_spend_used: "0",
-  plan_name: "国模畅用Lite",
+  plan_name: "示例套餐 A",
   plan_type: "quota_subscription",
   quota_5h: "39",
   quota_monthly: "299",
@@ -41,7 +41,7 @@ const SAMPLE_CUSTOM_PAYLOAD = {
 function customAccount(payloadMapping, extra = {}) {
   return {
     id: "custom-1",
-    name: "国模畅用",
+    name: "示例套餐",
     type: "custom",
     baseUrl: "https://example.com",
     key: "",
@@ -53,7 +53,7 @@ test("自定义接口：自动识别示例套餐结构", () => {
   const result = normalizeCustomBalance(SAMPLE_CUSTOM_PAYLOAD, customAccount());
   assert.equal(result.ok, true);
   assert.equal(result.currency, "CNY");
-  assert.equal(result.plan.name, "国模畅用Lite");
+  assert.equal(result.plan.name, "示例套餐 A");
   assert.equal(result.plan.active, true);
   assert.equal(result.plan.type, "quota_subscription");
   assert.equal(result.plan.expireAt, "2026-10-20T13:31:14.171Z");
@@ -468,7 +468,7 @@ const SUB2_USAGE_BALANCE_PAYLOAD = {
 };
 
 test("Sub2API /v1/usage：钱包余额模式（用户实际返回）", () => {
-  const result = normalizeSub2Usage(SUB2_USAGE_BALANCE_PAYLOAD, { id: "u1", name: "年华", type: "sub2api" });
+  const result = normalizeSub2Usage(SUB2_USAGE_BALANCE_PAYLOAD, { id: "u1", name: "钱包账户", type: "sub2api" });
   assert.equal(result.ok, true);
   assert.equal(result.currency, "USD");
   assert.equal(result.balance.remaining, 43.911521);
@@ -491,7 +491,7 @@ test("Sub2API /v1/usage：订阅分组模式输出日/周/月额度", () => {
     {
       mode: "unrestricted",
       isValid: true,
-      planName: "Claude Pro 拼车",
+      planName: "Pro 订阅",
       remaining: 8.5,
       unit: "USD",
       subscription: {
@@ -503,10 +503,10 @@ test("Sub2API /v1/usage：订阅分组模式输出日/周/月额度", () => {
       },
       usage: { total: { requests: 12, total_tokens: 3456, actual_cost: 62.4 } },
     },
-    { id: "u2", name: "拼车", type: "sub2api" },
+    { id: "u2", name: "订阅账户", type: "sub2api" },
   );
   assert.equal(result.plan.type, "subscription");
-  assert.equal(result.plan.name, "Claude Pro 拼车");
+  assert.equal(result.plan.name, "Pro 订阅");
   assert.deepEqual(result.windows.map((w) => w.key), ["daily", "weekly", "monthly"]);
   assert.equal(result.windows[0].remaining, 3.8);
   assert.equal(result.windows[1].remaining, 8.5);
@@ -679,7 +679,7 @@ test("自定义接口：通过 HTTP 请求读取并应用认证头", async () =>
       key: "custom-key",
       options: { authStyle: "bearer", path: "/api/quota", method: "GET" },
     });
-    assert.equal(result.plan.name, "国模畅用Lite");
+    assert.equal(result.plan.name, "示例套餐 A");
     assert.equal(result.windows.length, 3);
   } finally {
     await provider.close();

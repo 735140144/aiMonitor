@@ -11,7 +11,7 @@ function packagePayload(percent5h, reset5h) {
   return {
     currency: "CNY",
     has_active_plan: true,
-    plan_name: "国模畅用Lite",
+    plan_name: "示例套餐 A",
     plan_type: "quota_subscription",
     quota_5h: "100",
     quota_weekly: "100",
@@ -122,7 +122,7 @@ test("通知接口：测试发送会把汇总消息投递到 Webhook", async () 
       body: JSON.stringify({
         type: "custom",
         name: "套餐账户",
-        group: "jucode",
+        group: "示例分组",
         baseUrl: harness.upstreamBase,
         options: { path: "/", authStyle: "none" },
       }),
@@ -162,7 +162,7 @@ test("调度器：首次跌破阈值推送，恢复后再次跌破会重新推�
       body: JSON.stringify({
         type: "custom",
         name: "套餐账户",
-        group: "jucode",
+        group: "示例分组",
         baseUrl: harness.upstreamBase,
         options: { path: "/", authStyle: "none" },
       }),
@@ -218,7 +218,7 @@ test("调度器：到点推送全局汇总，按分组与余量排序，当天�
   try {
     for (const [name, group] of [
       ["高余量账户", "opencode"],
-      ["低余量账户", "jucode"],
+      ["低余量账户", "示例分组"],
     ]) {
       await json(harness.baseUrl, "/api/accounts", {
         method: "POST",
@@ -254,11 +254,11 @@ test("调度器：到点推送全局汇总，按分组与余量排序，当天�
     assert.match(content, /全局余量汇总/);
     assert.match(content, /共 2 个账户/);
     // 分组标题 + 分组内排序（两个账户窗口数据相同，按名称排序，组间同样稳定）
-    assert.match(content, /\*\*jucode\*\*/);
+    assert.match(content, /\*\*示例分组\*\*/);
     assert.match(content, /\*\*opencode\*\*/);
-    const jucodeAt = content.indexOf("**jucode**");
+    const 示例分组At = content.indexOf("**示例分组**");
     const opencodeAt = content.indexOf("**opencode**");
-    assert.ok(jucodeAt !== -1 && opencodeAt !== -1);
+    assert.ok(示例分组At !== -1 && opencodeAt !== -1);
 
     // 同一天再次运行不应重复推送
     clock.current = new Date("2026-10-11T01:30:00Z");

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ai-monitor
-  namespace: etl
+  namespace: ai-monitor
   labels:
     app.kubernetes.io/name: ai-monitor
     app.kubernetes.io/component: web
@@ -21,12 +21,13 @@ spec:
         app.kubernetes.io/component: web
     spec:
       imagePullSecrets:
-        - name: harbor-registry
+        - name: registry-credentials
       securityContext:
         fsGroup: 1000
       containers:
         - name: ai-monitor
-          image: hub.luckydcms.com/library/ai-monitor:20261011-04
+          # 替换成你自己的镜像地址与 tag
+          image: registry.example.com/library/ai-monitor:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

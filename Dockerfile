@@ -1,5 +1,8 @@
-# 集群节点是 amd64，仓库里 node:20-alpine 实际是 arm64 架构，因此固定使用 amd64 标签。
-FROM hub.luckydcms.com/library/node:20-alpine-amd64
+# 基础镜像可用 --build-arg NODE_IMAGE=... 覆盖：
+#  - 公共 Docker Hub：node:20-alpine（多架构，默认）
+#  - 内网私有仓库：改成你自己的地址，必要时显式指定架构标签（如 node:20-alpine-amd64）
+ARG NODE_IMAGE=node:20-alpine
+FROM ${NODE_IMAGE}
 
 ENV NODE_ENV=production \
     AIMONITOR_HOST=0.0.0.0 \

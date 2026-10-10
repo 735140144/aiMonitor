@@ -2,12 +2,12 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: ai-monitor-data
-  namespace: etl
+  namespace: ai-monitor
   labels:
     app.kubernetes.io/name: ai-monitor
 spec:
   accessModes: ["ReadWriteOnce"]
-  storageClassName: nfs1
+  storageClassName: standard
   resources:
     requests:
       storage: 1Gi

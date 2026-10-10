@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ai-monitor
-  namespace: etl
+  namespace: ai-monitor
   labels:
     app.kubernetes.io/name: ai-monitor
 spec:

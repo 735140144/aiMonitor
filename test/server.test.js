@@ -11,7 +11,7 @@ const SAMPLE_PAYLOAD = {
   currency: "CNY",
   expire_at: "2026-10-20T13:31:14.171139Z",
   has_active_plan: true,
-  plan_name: "国模畅用Lite",
+  plan_name: "示例套餐 A",
   plan_type: "quota_subscription",
   quota_5h: "39",
   quota_monthly: "299",
@@ -46,7 +46,7 @@ test("HTTP 接口：账户增删改查与余额聚合", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         type: "custom",
-        name: "国模畅用Lite",
+        name: "示例套餐 A",
         baseUrl: provider.baseUrl,
         key: "secret-key-1234",
         options: { path: "/quota", authStyle: "bearer" },
@@ -68,7 +68,7 @@ test("HTTP 接口：账户增删改查与余额聚合", async () => {
     const balances = await balanceResponse.json();
     const result = balances.results[accountId];
     assert.equal(result.ok, true);
-    assert.equal(result.plan.name, "国模畅用Lite");
+    assert.equal(result.plan.name, "示例套餐 A");
     assert.equal(result.windows.length, 3);
     assert.equal(result.windows[2].limit, 299);
     assert.equal(result.currency, "CNY");

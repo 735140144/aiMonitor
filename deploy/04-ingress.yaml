@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ai-monitor
-  namespace: etl
+  namespace: ai-monitor
   labels:
     app.kubernetes.io/name: ai-monitor
   annotations:
@@ -10,9 +10,9 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
 spec:
-  ingressClassName: lucky37
+  ingressClassName: nginx
   rules:
-    - host: balance.lucky37.cn
+    - host: ai-monitor.example.com
       http:
         paths:
           - path: /

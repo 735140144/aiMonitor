@@ -3,16 +3,23 @@
 #
 #   ./deploy/build-and-push.sh [tag]
 #
-# 依赖：kubectl 已指向目标集群；etl 命名空间内存在 harbor-registry 拉取凭证。
+# 依赖：kubectl 已指向目标集群；目标命名空间内存在镜像仓库的 dockerconfigjson 凭证。
+#
+# 可用环境变量覆盖：
+#   NAMESPACE=ai-monitor              目标命名空间
+#   REGISTRY=registry.example.com/library   镜像仓库前缀
+#   CRED_SECRET=registry-credentials  含推送权限的 dockerconfigjson Secret 名
+#   DIND_IMAGE=docker:28-dind         构建用 dind 镜像
 set -euo pipefail
 
-NAMESPACE="${NAMESPACE:-etl}"
-REGISTRY="${REGISTRY:-hub.luckydcms.com/library}"
+NAMESPACE="${NAMESPACE:-ai-monitor}"
+REGISTRY="${REGISTRY:-registry.example.com/library}"
 IMAGE="${REGISTRY}/ai-monitor"
 TAG="${1:-$(date +%Y%m%d-%H%M%S)}"
 BUILDER="ai-monitor-builder"
-# 推送凭证：hub 是拥有 library 项目写权限的账号，harbor-registry 为只读机器人账号。
-CRED_SECRET="${CRED_SECRET:-hub}"
+CRED_SECRET="${CRED_SECRET:-registry-credentials}"
+DIND_IMAGE="${DIND_IMAGE:-docker:28-dind}"
+PLATFORM="${PLATFORM:-linux/amd64}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 cleanup() {
@@ -34,7 +41,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: dind
-      image: hub.luckydcms.com/library/docker:28-dind-20260808
+      image: ${DIND_IMAGE}
       securityContext:
         privileged: true
       command: ["dockerd-entrypoint.sh"]
@@ -74,7 +81,7 @@ tar -C "${ROOT_DIR}" -czf - \
 
 echo "==> docker build ${IMAGE}:${TAG}"
 kubectl exec -n "${NAMESPACE}" "${BUILDER}" -- \
-  docker build --pull --platform linux/amd64 -t "${IMAGE}:${TAG}" -t "${IMAGE}:latest" /workspace
+  docker build --pull --platform "${PLATFORM}" -t "${IMAGE}:${TAG}" -t "${IMAGE}:latest" /workspace
 
 echo "==> docker push"
 kubectl exec -n "${NAMESPACE}" "${BUILDER}" -- docker push "${IMAGE}:${TAG}"
