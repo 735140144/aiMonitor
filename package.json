@@ -1,0 +1,16 @@
+{
+  "name": "ai-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI 账户与套餐余量监控面板（New API / Sub2API / OpenCode Go / 自定义接口）",
+  "scripts": {
+    "start": "node server.js",
+    "start:lan": "AIMONITOR_HOST=0.0.0.0 node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

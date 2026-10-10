@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0c0e12" />
+    <meta name="color-scheme" content="dark" />
+    <title>AI 账户余额</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="backdrop" aria-hidden="true"></div>
+
+    <svg class="sprite" aria-hidden="true" focusable="false">
+      <symbol id="i-wallet" viewBox="0 0 24 24">
+        <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" />
+        <path d="M4 6v12c0 1.1.9 2 2 2h14v-4" />
+        <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4z" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="M12 5v14" /></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24">
+        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+        <path d="M21 3v5h-5" />
+        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+        <path d="M8 16H3v5" />
+      </symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6h4" />
+      </symbol>
+      <symbol id="i-pencil" viewBox="0 0 24 24">
+        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+        <path d="m15 5 4 4" />
+      </symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24">
+        <path d="M3 6h18" />
+        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+        <path d="M10 11v6" /><path d="M14 11v6" />
+      </symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24">
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+        <path d="M12 9v4" /><path d="M12 17h.01" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+        <path d="m9 11 3 3L22 4" />
+      </symbol>
+      <symbol id="i-server" viewBox="0 0 24 24">
+        <rect width="20" height="8" x="2" y="2" rx="2" />
+        <rect width="20" height="8" x="2" y="14" rx="2" />
+        <path d="M6 6h.01" /><path d="M6 18h.01" />
+      </symbol>
+      <symbol id="i-sparkles" viewBox="0 0 24 24">
+        <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z" />
+        <path d="M5 3v4" /><path d="M19 17v4" /><path d="M3 5h4" /><path d="M17 19h4" />
+      </symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24">
+        <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+      </symbol>
+      <symbol id="i-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4" /><path d="M12 8h.01" />
+      </symbol>
+      <symbol id="i-link" viewBox="0 0 24 24">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+      </symbol>
+      <symbol id="i-activity" viewBox="0 0 24 24">
+        <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
+      </symbol>
+      <symbol id="i-zap" viewBox="0 0 24 24">
+        <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+      </symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24">
+        <path d="M8 2v4" /><path d="M16 2v4" />
+        <rect width="18" height="18" x="3" y="4" rx="2" />
+        <path d="M3 10h18" />
+      </symbol>
+      <symbol id="i-key" viewBox="0 0 24 24">
+        <path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4" />
+        <path d="m21 2-9.6 9.6" />
+        <circle cx="7.5" cy="15.5" r="5.5" />
+      </symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24">
+        <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+        <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+      </symbol>
+    </svg>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark"><svg class="icon"><use href="#i-wallet" /></svg></span>
+        <span class="brand-text">
+          <strong>AI 账户余额</strong>
+          <span class="brand-sub" id="brandSub">正在载入</span>
+        </span>
+      </div>
+      <div class="toolbar">
+        <button class="icon-btn" id="notifySettings" type="button" title="通知设置">
+          <svg class="icon"><use href="#i-bell" /></svg>
+        </button>
+        <button class="icon-btn" id="authButton" type="button" title="访问令牌">
+          <svg class="icon"><use href="#i-key" /></svg>
+        </button>
+        <label class="select-wrap" title="自动刷新间隔">
+          <svg class="icon"><use href="#i-clock" /></svg>
+          <select id="refreshInterval" aria-label="自动刷新间隔">
+            <option value="0">不自动刷新</option>
+            <option value="30000">30 秒</option>
+            <option value="60000" selected>1 分钟</option>
+            <option value="300000">5 分钟</option>
+          </select>
+          <svg class="icon chevron"><use href="#i-chevron" /></svg>
+        </label>
+        <button class="btn ghost" id="refreshAll" type="button" title="刷新全部账户">
+          <svg class="icon"><use href="#i-refresh" /></svg>
+          <span>刷新</span>
+        </button>
+        <button class="btn primary" id="addAccount" type="button" title="添加账户">
+          <svg class="icon"><use href="#i-plus" /></svg>
+          <span>添加账户</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="stats" id="stats" aria-label="总览"></section>
+      <section class="grid" id="grid"></section>
+      <section class="empty" id="empty" hidden>
+        <span class="empty-mark"><svg class="icon"><use href="#i-wallet" /></svg></span>
+        <p>还没有添加账户</p>
+        <button class="btn primary" id="emptyAdd" type="button">
+          <svg class="icon"><use href="#i-plus" /></svg>
+          <span>添加账户</span>
+        </button>
+      </section>
+    </main>
+
+    <dialog class="dialog" id="accountDialog" aria-labelledby="accountDialogTitle">
+      <form class="dialog-card" id="accountForm" method="dialog">
+        <header class="dialog-head">
+          <h2 id="accountDialogTitle">添加账户</h2>
+          <button class="icon-btn" type="button" data-close title="关闭">
+            <svg class="icon"><use href="#i-x" /></svg>
+          </button>
+        </header>
+        <div class="dialog-body">
+          <div class="field">
+            <span class="field-label">类型</span>
+            <div class="segmented" id="typeSegmented" role="radiogroup" aria-label="账户类型">
+              <label><input type="radio" name="type" value="newapi" checked /><svg class="icon"><use href="#i-server" /></svg><span>New API</span></label>
+              <label><input type="radio" name="type" value="sub2api" /><svg class="icon"><use href="#i-activity" /></svg><span>Sub2API</span></label>
+              <label><input type="radio" name="type" value="opencode" /><svg class="icon"><use href="#i-sparkles" /></svg><span>OpenCode Go</span></label>
+              <label><input type="radio" name="type" value="custom" /><svg class="icon"><use href="#i-link" /></svg><span>自定义</span></label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="field-label">名称</span>
+              <input class="input" type="text" name="name" id="accountName" placeholder="账户名称" autocomplete="off" />
+            </label>
+            <label class="field">
+              <span class="field-label" id="keyLabel">密钥</span>
+              <input class="input" type="password" name="key" id="accountKey" placeholder="粘贴密钥" autocomplete="off" />
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="field-label">服务地址</span>
+            <input class="input" type="url" name="baseUrl" id="accountBaseUrl" placeholder="https://api.example.com" autocomplete="off" spellcheck="false" />
+          </label>
+
+          <label class="field">
+            <span class="field-label">分组</span>
+            <input class="input" type="text" name="group" id="accountGroup" placeholder="通知汇总的分组名称，留空按账户类型归组" autocomplete="off" />
+          </label>
+
+          <div class="provider-fields" id="newapiFields">
+            <label class="field">
+              <span class="field-label">配额单位</span>
+              <input class="input" type="number" min="1" step="1" name="quotaPerUnit" id="quotaPerUnit" placeholder="500000" />
+              <span class="field-hint">默认 500000 配额 = 1 单位货币</span>
+            </label>
+            <label class="field">
+              <span class="field-label">货币</span>
+              <input class="input" type="text" name="currency" id="currency" placeholder="USD" autocomplete="off" />
+            </label>
+          </div>
+
+          <div class="provider-fields" id="sub2apiFields" hidden>
+            <label class="field">
+              <span class="field-label">认证方式</span>
+              <span class="select-wrap full">
+                <select id="sub2AuthMode" name="authMode">
+                  <option value="apikey">API 密钥（/v1/usage，推荐）</option>
+                  <option value="token">面板令牌</option>
+                  <option value="password">面板邮箱 + 密码</option>
+                </select>
+                <svg class="icon chevron"><use href="#i-chevron" /></svg>
+              </span>
+              <span class="field-hint" id="sub2Hint"></span>
+            </label>
+            <label class="field" id="sub2EmailField" hidden>
+              <span class="field-label">登录邮箱</span>
+              <input class="input" type="email" id="sub2Email" name="email" placeholder="you@example.com" autocomplete="off" />
+            </label>
+          </div>
+
+          <div class="provider-fields" id="customFields" hidden>
+            <div class="field-row narrow">
+              <label class="field">
+                <span class="field-label">请求方法</span>
+                <span class="select-wrap full">
+                  <select id="customMethod" name="method">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                  </select>
+                  <svg class="icon chevron"><use href="#i-chevron" /></svg>
+                </span>
+              </label>
+              <label class="field">
+                <span class="field-label">认证方式</span>
+                <span class="select-wrap full">
+                  <select id="customAuthStyle" name="authStyle">
+                    <option value="bearer">Bearer Token</option>
+                    <option value="x-api-key">x-api-key</option>
+                    <option value="query">URL 参数 key</option>
+                    <option value="none">无</option>
+                  </select>
+                  <svg class="icon chevron"><use href="#i-chevron" /></svg>
+                </span>
+              </label>
+            </div>
+            <label class="field">
+              <span class="field-label">请求路径</span>
+              <input class="input" type="text" id="customPath" name="path" placeholder="/api/account/quota" autocomplete="off" spellcheck="false" />
+            </label>
+            <details class="advanced">
+              <summary>
+                <svg class="icon chevron"><use href="#i-chevron" /></svg>
+                <span>高级设置</span>
+              </summary>
+              <label class="field">
+                <span class="field-label">请求头 JSON</span>
+                <textarea class="input textarea" id="customHeaders" name="headers" rows="2" placeholder='{"X-Client":"monitor"}' spellcheck="false"></textarea>
+              </label>
+              <label class="field" id="customBodyField" hidden>
+                <span class="field-label">请求体</span>
+                <textarea class="input textarea" id="customBody" name="body" rows="2" placeholder='{"key":"{{key}}"}' spellcheck="false"></textarea>
+              </label>
+              <label class="field">
+                <span class="field-label">字段映射 JSON</span>
+                <textarea class="input textarea mono" id="customMapping" name="mapping" rows="4" placeholder='{"balanceRemaining":"data.balance","windows":{"monthly":{"limit":"quota_monthly","used":"used_monthly","resetAt":"reset_monthly_at"}}}' spellcheck="false"></textarea>
+                <span class="field-hint">留空时自动识别 balance / quota / used 及 5h、日、周、月额度字段</span>
+              </label>
+            </details>
+          </div>
+
+          <p class="form-error" id="formError" hidden></p>
+        </div>
+        <footer class="dialog-foot">
+          <button class="btn ghost" type="button" data-close>取消</button>
+          <button class="btn primary" type="submit" id="accountSubmit">保存</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog class="dialog wide" id="detailsDialog" aria-labelledby="detailsTitle">
+      <div class="dialog-card">
+        <header class="dialog-head">
+          <h2 id="detailsTitle">账户数据</h2>
+          <div class="dialog-head-actions">
+            <button class="btn ghost small" type="button" id="copyRaw">
+              <svg class="icon"><use href="#i-copy" /></svg>
+              <span>复制</span>
+            </button>
+            <button class="icon-btn" type="button" data-close title="关闭">
+              <svg class="icon"><use href="#i-x" /></svg>
+            </button>
+          </div>
+        </header>
+        <div class="dialog-body">
+          <pre class="raw" id="detailsRaw"></pre>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="dialog small" id="confirmDialog" aria-labelledby="confirmTitle">
+      <div class="dialog-card">
+        <header class="dialog-head">
+          <h2 id="confirmTitle">删除账户</h2>
+          <button class="icon-btn" type="button" data-close title="关闭">
+            <svg class="icon"><use href="#i-x" /></svg>
+          </button>
+        </header>
+        <div class="dialog-body">
+          <p class="confirm-text" id="confirmText"></p>
+        </div>
+        <footer class="dialog-foot">
+          <button class="btn ghost" type="button" data-close>取消</button>
+          <button class="btn danger" type="button" id="confirmDelete">删除</button>
+        </footer>
+      </div>
+    </dialog>
+
+    <dialog class="dialog" id="notifyDialog" aria-labelledby="notifyTitle">
+      <div class="dialog-card">
+        <header class="dialog-head">
+          <h2 id="notifyTitle">通知设置</h2>
+          <div class="dialog-head-actions">
+            <button class="btn ghost small" type="button" id="previewDigest">
+              <svg class="icon"><use href="#i-info" /></svg>
+              <span>预览汇总</span>
+            </button>
+            <button class="icon-btn" type="button" data-close title="关闭">
+              <svg class="icon"><use href="#i-x" /></svg>
+            </button>
+          </div>
+        </header>
+        <div class="dialog-body">
+          <label class="toggle-row">
+            <input type="checkbox" id="notifyEnabled" />
+            <span>启用通知</span>
+          </label>
+
+          <section class="settings-block">
+            <h3>阈值告警</h3>
+            <div class="field-row">
+              <label class="field">
+                <span class="field-label">套餐窗口阈值（%）</span>
+                <input class="input" type="number" min="0" max="100" step="1" id="windowPercent" placeholder="20" />
+              </label>
+              <label class="field">
+                <span class="field-label">钱包余额阈值（金额）</span>
+                <input class="input" type="number" min="0" step="0.01" id="balanceAmount" placeholder="10" />
+              </label>
+            </div>
+            <p class="field-hint">5 小时 / 周 / 月余量首次低于该百分比时各推送一次；钱包类账户余额低于金额阈值时推送。对应窗口重置或余额回升后计数归零，再次跌破会重新推送。</p>
+          </section>
+
+          <section class="settings-block">
+            <h3>定时汇总</h3>
+            <label class="toggle-row">
+              <input type="checkbox" id="digestEnabled" />
+              <span>按时间点推送全局余量</span>
+            </label>
+            <div class="field-row">
+              <label class="field">
+                <span class="field-label">时间点（逗号分隔，24 小时制）</span>
+                <input class="input" type="text" id="digestTimes" placeholder="09:00, 18:00" autocomplete="off" />
+              </label>
+              <label class="field">
+                <span class="field-label">时区</span>
+                <input class="input" type="text" id="digestTimezone" placeholder="Asia/Shanghai" autocomplete="off" />
+              </label>
+            </div>
+            <p class="field-hint">汇总按分组推送：有效的在前、余量低的在前、限额的在后。</p>
+          </section>
+
+          <section class="settings-block">
+            <div class="settings-head">
+              <h3>Webhook</h3>
+              <button class="btn ghost small" type="button" id="addWebhook">
+                <svg class="icon"><use href="#i-plus" /></svg>
+                <span>添加</span>
+              </button>
+            </div>
+            <div class="webhook-list" id="webhookList"></div>
+            <p class="field-hint" id="webhookEmpty">还没有 Webhook，添加钉钉 / 企业微信 / 飞书机器人即可接收通知。</p>
+          </section>
+
+          <p class="form-error" id="notifyError" hidden></p>
+        </div>
+        <footer class="dialog-foot">
+          <button class="btn ghost" type="button" data-close>取消</button>
+          <button class="btn primary" type="button" id="saveNotify">保存</button>
+        </footer>
+      </div>
+    </dialog>
+
+    <dialog class="dialog small" id="authDialog" aria-labelledby="authTitle">
+      <form class="dialog-card" id="authForm">
+        <header class="dialog-head">
+          <h2 id="authTitle">访问令牌</h2>
+          <button class="icon-btn" type="button" data-close title="关闭">
+            <svg class="icon"><use href="#i-x" /></svg>
+          </button>
+        </header>
+        <div class="dialog-body">
+          <label class="field">
+            <span class="field-label">令牌</span>
+            <input class="input" type="password" id="authToken" placeholder="输入 AIMONITOR_TOKEN" autocomplete="off" spellcheck="false" />
+            <span class="field-hint" id="authState">服务端设置 AIMONITOR_TOKEN 后，每台设备首次访问需要输入一次。</span>
+          </label>
+          <p class="form-error" id="authError" hidden></p>
+        </div>
+        <footer class="dialog-foot">
+          <button class="btn ghost" type="button" id="clearAuthToken">清除令牌</button>
+          <button class="btn primary" type="submit">保存</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
